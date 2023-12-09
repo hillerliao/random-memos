@@ -12,4 +12,4 @@ Modify the `config.py` with your own secret things.
 
 ## Set Up Scheduled Task
 
-`* 7,11,17,21 * * * python  /path-of-the-script/random_memo.py`
+`0 7,11,17,21 * * * python  /path-of-the-script/random_memo.py`
