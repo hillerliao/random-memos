@@ -2,6 +2,7 @@ import sqlite3
 import requests
 from  config import *
 
+
 db = f'{DB_PATH}/memos_prod.db'
 
 def get_random_memo(db='', filter=FILTER): 
