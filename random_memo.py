@@ -1,4 +1,5 @@
 import sqlite3
+import json
 import requests
 from  config import *
 
@@ -40,6 +41,7 @@ def get_random_memo(db='', filter=FILTER):
 def push_msg(channel='telegram'):
     channel= channel.lower()
     msg = get_random_memo(db, filter=FILTER)
+    response = None
     if channel== 'telegram':
         if not TG_BOT_TOKEN or not CHAT_ID:
             print('TG_BOT_TOKEN or CHAT_ID is not set.')
@@ -48,13 +50,17 @@ def push_msg(channel='telegram'):
         params = {'chat_id': CHAT_ID, 'text': msg}
         response = requests.post(url, params=params)
     elif channel == 'n8n':
-        N8N_WEBHOOK_URL = N8N_WEBHOOK_URL.strip()
-        if not N8N_WEBHOOK_URL:
+        webhook_url = N8N_WEBHOOK_URL.strip()
+        if not webhook_url:
             print('N8N_WEBHOOK_URL is not set.')
             return
         headers = {'token': N8N_WEBHOOK_TOKEN, 'Content-Type': 'application/json'}
-        response = requests.post(N8N_WEBHOOK_URL, json={'content': msg}, headers=headers)
-    if response.status_code == 200:
+        payload = {"content": msg}
+        response = requests.post(webhook_url, headers=headers, json=payload)
+        print(f'Sending message to n8n: {msg}')
+        print(f'response: {response}')
+
+    if response and response.status_code == 200:
         print('Message sent.')
     else:
         print('Message sending failed.')
